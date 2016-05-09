@@ -10,9 +10,7 @@ class CuteWatchDog : QFileSystemWatcher
     Q_OBJECT
 
 private slots:
-    void onFileChanged( QString path );
     void onDirectoryChanged( QString path );
-
     void onProcessStarted();
     void onReadyRead();
     void onFinished( int );
@@ -21,12 +19,9 @@ public:
     CuteWatchDog();
     ~CuteWatchDog();
 
-    void showInfo();
     void setCallbackFunc( const QString &cb = QString() );
-    bool setWatchDir( const QString &dir = QString() );
-    bool setWatchFile( const QString &file = QString() );
-
-    void watchThenMake( const QString &dir );
+    void setWatchDir( const QString &dir = QString() );
+    void watchDirThenRunCmd( const QString &dir, const QString &cmd );
 
 private:
     QString cmd;

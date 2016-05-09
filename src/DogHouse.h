@@ -18,7 +18,6 @@ public:
     ~DogHouse();
 
 private slots:
-    void on_pushButton_watchfile_clicked();
     void on_pushButton_watchdir_clicked();
     void on_pushButton_cmd_clicked();
 

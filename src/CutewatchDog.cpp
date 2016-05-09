@@ -2,24 +2,29 @@
 #include "DogHouse.h"
 #include <QDebug>
 #include <QProcess>
+#include <iostream>
+#include <QDateTime>
 
-void CuteWatchDog::onFileChanged(QString path)
+static QString now()
 {
-    qDebug() << path << " changed";
-    if ( !cmd.isEmpty() ) {
-        process->start( cmd);
-    }
+    QDateTime dt( QDateTime::currentDateTime() );
+    return QString().sprintf( "%02d:%02d:%02d.%03d"  // e.g. 01:23:45.678
+                              , dt.time().hour()
+                              , dt.time().minute()
+                              , dt.time().second()
+                              , dt.time().msec() );
 }
 
 void CuteWatchDog::onDirectoryChanged(QString path)
 {
-    qDebug() << path << " changed";
+    std::cout << qPrintable(QString("%1, hit dir: %2\n").arg(now()).arg(path));
+    if ( !cmd.isEmpty() ) {
+        process->start( cmd );
+    }
 }
 
 CuteWatchDog::CuteWatchDog()
 {
-    connect( this, SIGNAL(fileChanged(QString)),
-             this, SLOT(onFileChanged(QString)) );
     connect( this, SIGNAL(directoryChanged(QString)),
              this, SLOT(onDirectoryChanged(QString)) );
 
@@ -36,36 +41,16 @@ CuteWatchDog::~CuteWatchDog()
 {
 }
 
-void CuteWatchDog::showInfo()
-{
-    qDebug() << "files are: " << files();
-    qDebug() << "directory are: " << directories();
-}
-
 void CuteWatchDog::setCallbackFunc(const QString &cb)
 {
     cmd = cb;
+    std::cout << "set command to " << qPrintable(cb);
 }
 
-bool CuteWatchDog::setWatchDir(const QString &dir)
+void CuteWatchDog::setWatchDir(const QString &dir)
 {
     addPath( dir );
-    showInfo();
-    return true;
-}
-
-bool CuteWatchDog::setWatchFile(const QString &file)
-{
-    addPath( file );
-    showInfo();
-    return true;
-}
-
-void CuteWatchDog::watchThenMake(const QString &dir)
-{
-    cmd = "make";
-    addPath( dir );
-    qDebug() << "watching dir(" << dir << ") for changes...";
+    std::cout << qPrintable(QString("Watching %1...\n").arg(dir));
 }
 
 void CuteWatchDog::onProcessStarted()
@@ -74,9 +59,16 @@ void CuteWatchDog::onProcessStarted()
 
 void CuteWatchDog::onReadyRead()
 {
-    qDebug() << "\n\n" << process->readAll();
+    std::cout << "\n\n\n" << qPrintable(process->readAll()) << "\n\n";
 }
 
 void CuteWatchDog::onFinished(int id)
 {
+}
+
+void CuteWatchDog::watchDirThenRunCmd( const QString &dir, const QString &cmd_ )
+{
+    setCallbackFunc( cmd_ );
+    addPath( dir );
+    setWatchDir( dir );
 }
