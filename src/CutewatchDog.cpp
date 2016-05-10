@@ -2,6 +2,8 @@
 #include "DogHouse.h"
 #include <QDebug>
 #include <QProcess>
+#include <QDir>
+#include <QQueue>
 #include <iostream>
 #include <QDateTime>
 
@@ -49,7 +51,7 @@ void CuteWatchDog::setCallbackFunc(const QString &cb)
 
 void CuteWatchDog::setWatchDir(const QString &dir)
 {
-    addPath( dir );
+    addPaths( grabAllDescendents( rootDir = dir ) );
     std::cout << qPrintable(QString("Watching %1...\n").arg(dir));
 }
 
@@ -71,4 +73,21 @@ void CuteWatchDog::watchDirThenRunCmd( const QString &dir, const QString &cmd_ )
     setCallbackFunc( cmd_ );
     addPath( dir );
     setWatchDir( dir );
+}
+
+QStringList CuteWatchDog::grabAllDescendents( const QString &root )
+{
+    QStringList dirEntries;
+    QDir dir( root );
+    QQueue<QDir> queue;
+    queue.enqueue( dir );
+    while( !queue.isEmpty() ) {
+        QDir d = queue.dequeue();
+        dirEntries << d.absolutePath();
+        foreach( const QFileInfo &info, d.entryInfoList( QDir::Dirs | QDir::NoDotAndDotDot ) ) {
+             QDir subdir( info.absoluteFilePath() );
+             queue.enqueue( subdir );
+         }
+    }
+    return dirEntries;
 }

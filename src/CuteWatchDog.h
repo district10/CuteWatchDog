@@ -22,9 +22,11 @@ public:
     void setCallbackFunc( const QString &cb = QString() );
     void setWatchDir( const QString &dir = QString() );
     void watchDirThenRunCmd( const QString &dir, const QString &cmd );
+    static QStringList grabAllDescendents( const QString &root );
 
 private:
     QString cmd;
+    QString rootDir;
     QProcess *process;
 };
 
