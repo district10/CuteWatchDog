@@ -11,3 +11,7 @@ Node.js 相关的工具挺多的，但我挺烦 npm 那蛋疼的网速，使用�
 虽然能工作，但……效果似乎不好，根本不能投入使用。
 
 这也算作自己 [district10/blog-utils: Utils to process my blog posts.](https://github.com/district10/blog-utils) 的一部分吧。
+
+---
+
+写了 Java 版本，效果不错：[district10/md2html: 把文件夹下的 Markdown 文件，转化成 GitHub 风格的 HTML。](https://github.com/district10/md2html)。
